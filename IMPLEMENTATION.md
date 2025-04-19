@@ -5,7 +5,10 @@
 ```mermaid
 graph LR
     A[Bun Server] --> B[Local Storage]
-    B --> C[Python Processor]
+    A --> E[OpenAI Service]
+    E --> F[Command Parser]
+    F --> G[Command Validator]
+    G --> C[Python Processor]
     C --> D[Modified Doc]
 ```
 
@@ -21,8 +24,7 @@ graph LR
 ```typescript
 interface InsertionRequest {
   document: File;
-  clause: string;
-  targetSection: string;
+  instructions: string;
   formatting?: {
     bold?: boolean;
     underline?: boolean;
@@ -39,10 +41,49 @@ interface ProcessingStatus {
 }
 ```
 
-### 2. Python Processor (`/src/processor`)
+### 2. OpenAI Service (`/src/llm`)
+
+- Natural language instruction parsing
+- Command generation and validation
+- Command explanation
+
+```typescript
+interface DocumentCommand {
+  documentId: string;
+  action: 'insert' | 'modify' | 'delete';
+  location: {
+    type: 'heading' | 'section' | 'sentence' | 'paragraph';
+    value?: string;
+    number?: string | number;
+    position: 'before' | 'after' | 'replace' | 'start' | 'end';
+    matchText?: string;
+    matchLevel?: boolean;
+  };
+  content?: {
+    text: string;
+    style: {
+      matchSource?: boolean;
+      specific?: {
+        bold?: boolean;
+        italic?: boolean;
+        underline?: boolean;
+        // ... other style properties
+      };
+    };
+  };
+}
+
+class OpenAIService {
+  async parseInstructions(text: string): Promise<DocumentCommand[]>;
+  async validateCommand(command: DocumentCommand): Promise<ValidationResult>;
+  async explainCommand(command: DocumentCommand): Promise<string>;
+}
+```
+
+### 3. Python Processor (`/src/processor`)
 
 - Document parsing
-- Section finding
+- Command execution
 - Style matching
 - Content insertion
 
@@ -51,11 +92,9 @@ class DocumentProcessor:
     def __init__(self, doc_path: str):
         self.doc = Document(doc_path)
 
-    def process_document(
+    def execute_commands(
         self,
-        clause: str,
-        target_section: str,
-        formatting: dict
+        commands: List[Dict],
     ) -> str:
         # Implementation
         pass
@@ -64,7 +103,7 @@ class DocumentProcessor:
         # Implementation
         pass
 
-    def _find_section(self, section_id: str) -> tuple:
+    def _execute_command(self, command: Dict) -> None:
         # Implementation
         pass
 ```
@@ -76,13 +115,17 @@ class DocumentProcessor:
 - Bun >= 1.0
 - Python >= 3.8
 - python-docx
+- OpenAI API key
 
 ### Development Environment
 
 ```bash
 # Install dependencies
 bun install
-pip install python-docx
+pip install python-docx openai
+
+# Set environment variables
+export OPENAI_API_KEY=your_key_here
 
 # Start development
 bun dev
@@ -96,6 +139,9 @@ bun dev
 │   ├── api/
 │   │   ├── index.ts        # Main server
 │   │   └── routes.ts       # Route handlers
+│   ├── llm/
+│   │   ├── openai.ts       # OpenAI service
+│   │   └── openai.test.ts  # LLM tests
 │   ├── processor/
 │   │   ├── processor.py    # Document processing
 │   │   └── utils.py        # Helper functions
@@ -112,7 +158,8 @@ bun dev
 ```json
 {
   "dependencies": {
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "openai": "^4.0.0"
   },
   "devDependencies": {
     "bun-types": "latest"
@@ -127,23 +174,35 @@ bun dev
    - Invalid file types
    - Processing failures
    - Timeout handling
+   - Invalid instructions
 
-2. **Processor**
+2. **LLM Layer**
+
+   - API failures
+   - Invalid command generation
+   - Validation errors
+   - Rate limiting
+
+3. **Processor**
    - Document parsing errors
-   - Section not found
+   - Command execution failures
    - Style matching issues
+   - Invalid state handling
 
 ## Testing Strategy
 
 1. **Unit Tests**
 
    - API endpoint tests
+   - LLM parsing tests
+   - Command validation tests
    - Document processing tests
    - Error handling tests
 
 2. **Integration Tests**
    - End-to-end flow
    - File processing
+   - LLM integration
    - Error scenarios
 
 ## Local Development Workflow
@@ -153,7 +212,10 @@ bun dev
    ```bash
    # Install dependencies
    bun install
-   pip install python-docx
+   pip install python-docx openai
+
+   # Set environment variables
+   export OPENAI_API_KEY=your_key_here
 
    # Start server
    bun dev
@@ -173,3 +235,4 @@ bun dev
    - Bun debugger
    - Python debugger
    - Console logging
+   - LLM response inspection

@@ -95,18 +95,18 @@ Create a system that can intelligently insert legal clauses into Word documents 
 
 - [ ] LLM Integration
 
-  - [ ] Setup LLM service
-    - [ ] Choose provider (OpenAI, Anthropic, etc.)
-    - [ ] Implement API integration
-    - [ ] Handle rate limiting and errors
-  - [ ] Create instruction parser
-    - [ ] Natural language understanding
-    - [ ] Command generation
-    - [ ] Context preservation
-  - [ ] Implement safety checks
-    - [ ] Validate generated commands
-    - [ ] Detect potential issues
-    - [ ] Provide explanations
+  - [x] Setup LLM service
+    - [x] Choose provider (OpenAI)
+    - [x] Implement API integration
+    - [x] Handle rate limiting and errors
+  - [x] Create instruction parser
+    - [x] Natural language understanding
+    - [x] Command generation
+    - [x] Context preservation
+  - [x] Implement safety checks
+    - [x] Validate generated commands
+    - [x] Detect potential issues
+    - [x] Provide explanations
 
 - [ ] Document Processing Pipeline
 
