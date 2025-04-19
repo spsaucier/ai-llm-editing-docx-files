@@ -1,58 +1,30 @@
 from docx import Document
 from typing import List, TypedDict
 from pathlib import Path
+import sys
+import json
+import re
 
 class Instruction(TypedDict):
     contract: str
     instruction: str
     clause: str
 
-def get_full_formatting(paragraph) -> str:
-    """Extract all possible formatting and metadata from a paragraph."""
-    text = []
-    
-    # Paragraph level formatting
-    props = []
-    if paragraph.style:
-        props.append(f"style={paragraph.style.name}")
-    if paragraph.paragraph_format.alignment:
-        props.append(f"align={paragraph.paragraph_format.alignment}")
-    if paragraph.paragraph_format.line_spacing:
-        props.append(f"line_spacing={paragraph.paragraph_format.line_spacing}")
-    if paragraph.paragraph_format.space_before:
-        props.append(f"space_before={paragraph.paragraph_format.space_before}")
-    if paragraph.paragraph_format.space_after:
-        props.append(f"space_after={paragraph.paragraph_format.space_after}")
-    if paragraph.paragraph_format.first_line_indent:
-        props.append(f"indent={paragraph.paragraph_format.first_line_indent}")
-    
-    if props:
-        text.append(f"[p:{','.join(props)}]")
-    
-    # Run level formatting
+def get_full_formatting(paragraph):
+    """Get text with formatting."""
+    formatted_text = ''
     for run in paragraph.runs:
-        props = []
-        if run.bold:
-            props.append('bold')
-        if run.italic:
-            props.append('italic')
-        if run.underline:
-            props.append('underline')
-        if run.font.name:
-            props.append(f"font={run.font.name}")
-        if run.font.size:
-            props.append(f"size={run.font.size}")
-        if run.font.color.rgb:
-            props.append(f"color={run.font.color.rgb}")
-        if run.style:
-            props.append(f"style={run.style.name}")
-        
-        if props:
-            text.append(f"[{','.join(props)}]{run.text}")
-        else:
-            text.append(run.text)
-    
-    return ''.join(text)
+        if run.text.strip():
+            formatted_text += run.text
+    return formatted_text
+
+def clean_contract_name(text: str) -> str:
+    """Extract clean contract filename."""
+    # Extract contract number
+    match = re.search(r'Contract (\d+)', text)
+    if match:
+        return f'Contract {match.group(1)}.docx'
+    return text
 
 def parse_instructions(doc_path: str | Path) -> List[Instruction]:
     """Parse the instructions document into structured data."""
@@ -81,7 +53,7 @@ def parse_instructions(doc_path: str | Path) -> List[Instruction]:
             parts = plain_text.split('Contract 1', 1)
             instruction = parts[1].strip() if len(parts) > 1 else ''
             current = {
-                'contract': formatted_text.split('Contract 1', 1)[0] + 'Contract 1',
+                'contract': clean_contract_name(formatted_text),
                 'instruction': instruction,
                 'clause': ''
             }
@@ -90,7 +62,7 @@ def parse_instructions(doc_path: str | Path) -> List[Instruction]:
             if current:
                 instructions.append(current)
             current = {
-                'contract': formatted_text,
+                'contract': clean_contract_name(formatted_text),
                 'instruction': '',
                 'clause': ''
             }
@@ -111,12 +83,16 @@ def parse_instructions(doc_path: str | Path) -> List[Instruction]:
 
 def main():
     """CLI interface for testing the parser."""
-    instructions = parse_instructions('Instructions and Snippets of Text.docx')
-    for inst in instructions:
-        print(f"\n{inst['contract']}")
-        print(f"Instruction: {inst['instruction']}")
-        print(f"Clause: {inst['clause']}")
-        print("-" * 80)
+    if len(sys.argv) != 2:
+        print(json.dumps({"error": "Missing document path argument"}))
+        sys.exit(1)
+
+    try:
+        instructions = parse_instructions(sys.argv[1])
+        print(json.dumps(instructions))
+    except Exception as e:
+        print(json.dumps({"error": str(e)}))
+        sys.exit(1)
 
 if __name__ == '__main__':
     main() 

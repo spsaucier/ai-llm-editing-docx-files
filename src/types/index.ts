@@ -91,16 +91,49 @@ export interface ParagraphLocation {
 export interface DocumentCommand {
   documentId: string;
   action: 'insert' | 'modify' | 'delete';
-  location: LocationSpecifier;
-  content?: ContentSpecification;
-  validation?: {
-    preConditions?: {
-      mustExist?: string[];
-      mustNotExist?: string[];
-    };
-    postConditions?: {
-      shouldExist?: string[];
-      shouldNotExist?: string[];
+  location: {
+    type: 'heading' | 'section' | 'sentence' | 'paragraph';
+    value?: string; // For heading type
+    number?: string | number; // For section type
+    position: 'before' | 'after' | 'replace' | 'start' | 'end';
+    matchText?: string; // For sentence/paragraph type
+    section?: string | number; // For sentence/paragraph type
+    paragraphNumber?: number; // For paragraph type
+    sentenceNumber?: number; // For sentence type
+    matchLevel?: boolean; // For heading type
+  };
+  content?: {
+    text: string;
+    style: {
+      matchSource?: boolean;
+      specific?: {
+        bold?: boolean;
+        italic?: boolean;
+        underline?: boolean;
+        color?: string;
+        font?: string;
+        size?: number;
+        style?: string;
+        spacing?: {
+          before?: number;
+          after?: number;
+          line?: number;
+        };
+        alignment?: 'left' | 'center' | 'right' | 'justify';
+      };
     };
   };
 }
+
+export type Change = {
+  type: 'replace' | 'add';
+  text: string;
+  oldText?: string;
+  section?: string;
+};
+
+export type ContractResult = {
+  document?: string;
+  error?: string;
+  changes?: Change[];
+};

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'bun:test';
 import { OpenAIService } from './openai';
-import { DocumentCommand } from '../types';
+import { DocumentCommand } from '../commands/schema';
 
 describe('OpenAI Service', () => {
   const service = new OpenAIService();

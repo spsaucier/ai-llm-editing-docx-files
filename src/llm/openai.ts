@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { DocumentCommand } from '../types';
+import { DocumentCommand } from '../commands/schema';
 import { config } from '../config';
 
 export class OpenAIService {
@@ -19,6 +19,10 @@ export class OpenAIService {
           role: 'system',
           content: `You are a document processing assistant that converts natural language instructions into structured JSON commands.
 Given instructions about modifying a document, output a JSON object with a "commands" array containing DocumentCommand objects.
+
+For text replacements, use:
+- type: "paragraph" with matchText for exact text matches
+- type: "heading" with value for heading replacements
 
 The output format MUST be a JSON object:
 {
@@ -60,6 +64,24 @@ The output format MUST be a JSON object:
       }
     }
   ]
+}
+
+Example for text replacement:
+Input: Replace "old text" with "new text"
+Output: {
+  "commands": [{
+    "documentId": "document.docx",
+    "action": "modify",
+    "location": {
+      "type": "paragraph",
+      "matchText": "old text",
+      "position": "replace"
+    },
+    "content": {
+      "text": "new text",
+      "style": { "matchSource": true }
+    }
+  }]
 }
 
 Be precise with locations and ensure all commands are valid. Output must be valid JSON.`,

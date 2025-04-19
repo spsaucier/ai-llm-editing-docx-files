@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'bun:test';
 import { Processor } from '.';
-import { DocumentCommand } from '../types';
+import { DocumentCommand } from '../commands/schema';
 import { mkdir, writeFile, unlink } from 'fs/promises';
 import { join } from 'path';
 import { spawn } from 'child_process';

@@ -1,0 +1,1 @@
+from docx import Document; from docx.shared import RGBColor; doc = Document(); p = doc.add_paragraph(); run = p.add_run("test"); run.font.color.rgb = RGBColor(0, 0, 255); doc.save("test-documents/test.docx")
