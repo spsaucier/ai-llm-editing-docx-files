@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, test, expect } from 'bun:test';
 import { OpenAIService } from './openai';
 import { DocumentCommand } from '../commands/schema';
 
@@ -6,7 +6,7 @@ describe('OpenAI Service', () => {
   const service = new OpenAIService();
   const TIMEOUT = 60000; // 60s timeout
 
-  it(
+  test(
     'should parse instructions into commands',
     async () => {
       console.log('Starting instruction parsing test...');
@@ -66,7 +66,7 @@ describe('OpenAI Service', () => {
     TIMEOUT
   );
 
-  it(
+  test(
     'should validate commands',
     async () => {
       console.log('Starting command validation test...');
@@ -117,7 +117,7 @@ describe('OpenAI Service', () => {
     TIMEOUT
   );
 
-  it(
+  test(
     'should explain commands',
     async () => {
       console.log('Starting command explanation test...');

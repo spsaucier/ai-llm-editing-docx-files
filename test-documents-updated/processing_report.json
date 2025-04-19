@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-04-19T21:13:41.005Z",
+  "processed": [
+    {
+      "contract": "Contract 3",
+      "changes": [
+        {
+          "type": "add",
+          "text": "Residuals.",
+          "section": "11"
+        },
+        {
+          "type": "add",
+          "text": "Nothing in this Agreement shall be construed to limit the Receiving Party’s right to independently develop or acquire products or services without use of the Disclosing Party’s Confidential Information, nor shall it restrict the use of any general knowledge, skills, or experience retained in unaided memory by personnel of the Receiving Party.",
+          "section": "11"
+        }
+      ],
+      "outputPath": "/Users/stephensaucier/freelance/yellowpadai/test-documents-updated/Contract 3.docx"
+    }
+  ],
+  "failed": [
+    {
+      "contract": "Contract 1",
+      "error": "Could not find target location: {'type': 'heading', 'value': 'Definitions', 'position': 'after'}"
+    },
+    {
+      "contract": "Contract 2",
+      "error": "Could not find target location: {'type': 'sentence', 'number': 1, 'position': 'after', 'section': '11'}"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, test, expect } from 'bun:test';
 import { DocumentCommand } from './schema';
 import { validateCommand, CommandValidationError } from './validator';
 
 describe('Command Validation', () => {
-  it('should validate a valid insert command', () => {
+  test('should validate a valid insert command', () => {
     const command: DocumentCommand = {
       documentId: 'Contract1.docx',
       action: 'insert',
@@ -26,7 +26,7 @@ describe('Command Validation', () => {
     expect(() => validateCommand(command)).not.toThrow();
   });
 
-  it('should validate a valid modify command', () => {
+  test('should validate a valid modify command', () => {
     const command: DocumentCommand = {
       documentId: 'Contract2.docx',
       action: 'modify',
@@ -47,7 +47,7 @@ describe('Command Validation', () => {
     expect(() => validateCommand(command)).not.toThrow();
   });
 
-  it('should validate a valid delete command', () => {
+  test('should validate a valid delete command', () => {
     const command: DocumentCommand = {
       documentId: 'Contract3.docx',
       action: 'delete',
@@ -61,7 +61,7 @@ describe('Command Validation', () => {
     expect(() => validateCommand(command)).not.toThrow();
   });
 
-  it('should reject command without documentId', () => {
+  test('should reject command without documentId', () => {
     const command: any = {
       action: 'insert',
       location: {
@@ -74,7 +74,7 @@ describe('Command Validation', () => {
     expect(() => validateCommand(command)).toThrow(CommandValidationError);
   });
 
-  it('should reject insert command without content', () => {
+  test('should reject insert command without content', () => {
     const command: DocumentCommand = {
       documentId: 'Contract1.docx',
       action: 'insert',
@@ -88,7 +88,7 @@ describe('Command Validation', () => {
     expect(() => validateCommand(command)).toThrow(CommandValidationError);
   });
 
-  it('should reject invalid color format', () => {
+  test('should reject invalid color format', () => {
     const command: DocumentCommand = {
       documentId: 'Contract1.docx',
       action: 'insert',
@@ -110,7 +110,7 @@ describe('Command Validation', () => {
     expect(() => validateCommand(command)).toThrow(CommandValidationError);
   });
 
-  it('should reject negative spacing values', () => {
+  test('should reject negative spacing values', () => {
     const command: DocumentCommand = {
       documentId: 'Contract1.docx',
       action: 'insert',

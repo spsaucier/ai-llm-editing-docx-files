@@ -46,7 +46,7 @@ class CommandProcessor:
     def find_heading(self, heading_text: str) -> Optional[int]:
         """Find paragraph index of a heading"""
         for i, para in enumerate(self.doc.paragraphs):
-            if para.style.name.startswith('Heading') and heading_text in para.text:
+            if para.style.name.startswith('Heading') and para.text.strip() == heading_text.strip():
                 return i
         return None
 
