@@ -3,6 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
+    "dev": "bun src/api/index.ts",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
     "test": "bun test",
