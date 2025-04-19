@@ -52,11 +52,18 @@ export interface ContentSpecification {
   style: StyleRequirements;
 }
 
-export type LocationSpecifier =
-  | HeadingLocation
-  | SectionLocation
-  | SentenceLocation
-  | ParagraphLocation;
+export interface Change {
+  type: 'replace' | 'add';
+  text: string;
+  oldText?: string;
+  section?: string;
+}
+
+export type ContractResult = {
+  document?: string;
+  error?: string;
+  changes?: Change[];
+};
 
 export interface HeadingLocation {
   type: 'heading';
@@ -68,40 +75,34 @@ export interface HeadingLocation {
 export interface SectionLocation {
   type: 'section';
   number: string | number;
-  position: 'start' | 'end' | 'replace';
-}
-
-export interface SentenceLocation {
-  type: 'sentence';
-  section?: string | number;
-  paragraph?: number;
-  sentenceNumber?: number;
-  matchText?: string;
   position: 'before' | 'after' | 'replace';
+  section?: string | number;
 }
 
 export interface ParagraphLocation {
   type: 'paragraph';
-  section?: string | number;
-  paragraphNumber?: number;
-  matchText?: string;
+  matchText: string;
   position: 'before' | 'after' | 'replace';
+  paragraphNumber?: number;
 }
+
+export interface SentenceLocation {
+  type: 'sentence';
+  number: string | number;
+  position: 'before' | 'after' | 'replace';
+  sentenceNumber?: number;
+}
+
+export type LocationSpecifier =
+  | HeadingLocation
+  | SectionLocation
+  | ParagraphLocation
+  | SentenceLocation;
 
 export interface DocumentCommand {
   documentId: string;
   action: 'insert' | 'modify' | 'delete';
-  location: {
-    type: 'heading' | 'section' | 'sentence' | 'paragraph';
-    value?: string; // For heading type
-    number?: string | number; // For section type
-    position: 'before' | 'after' | 'replace' | 'start' | 'end';
-    matchText?: string; // For sentence/paragraph type
-    section?: string | number; // For sentence/paragraph type
-    paragraphNumber?: number; // For paragraph type
-    sentenceNumber?: number; // For sentence type
-    matchLevel?: boolean; // For heading type
-  };
+  location: LocationSpecifier;
   content?: {
     text: string;
     style: {
@@ -110,30 +111,7 @@ export interface DocumentCommand {
         bold?: boolean;
         italic?: boolean;
         underline?: boolean;
-        color?: string;
-        font?: string;
-        size?: number;
-        style?: string;
-        spacing?: {
-          before?: number;
-          after?: number;
-          line?: number;
-        };
-        alignment?: 'left' | 'center' | 'right' | 'justify';
       };
     };
   };
 }
-
-export type Change = {
-  type: 'replace' | 'add';
-  text: string;
-  oldText?: string;
-  section?: string;
-};
-
-export type ContractResult = {
-  document?: string;
-  error?: string;
-  changes?: Change[];
-};

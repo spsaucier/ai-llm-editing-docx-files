@@ -49,7 +49,12 @@ export class Orchestrator {
 
           // Generate commands from instruction
           logger.info({ id, instruction: instruction.instruction }, 'Generating commands');
-          const commands = await this.llm.parseInstructions(instruction.instruction);
+          const commands = await this.llm.parseInstructions(
+            JSON.stringify({
+              instruction: instruction.instruction,
+              clause: instruction.clause,
+            })
+          );
           logger.info({ id, commandCount: commands.length, commands }, 'Generated commands');
 
           // Validate each command
