@@ -1,4 +1,4 @@
-# YellowPad AI
+# Edit .docx files natively via an LLM & Python
 
 Intelligent document processing system that can insert legal clauses into Word documents while maintaining formatting and structure.
 
